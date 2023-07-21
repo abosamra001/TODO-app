@@ -29,8 +29,8 @@ class Task extends HiveObject {
     this.done = false,
   }) : id = uuid.v4();
 
-  Task get copy {
-    final taskCopy = Task(title: title, createdAt: createdAt);
-    return taskCopy;
-  }
+  // Task get copy {
+  //   final taskCopy = Task(title: title, createdAt: createdAt);
+  //   return taskCopy;
+  // }
 }

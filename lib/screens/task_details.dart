@@ -63,7 +63,6 @@ class TaskDetails extends StatelessWidget {
             'Created on $createdDate',
             style: Theme.of(context).textTheme.labelLarge,
           ),
-          Text('id : ${task.id}'),
           const SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: () {

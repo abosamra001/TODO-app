@@ -63,16 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              setState(() {});
-              debugPrint('new tasks length : ${newTasksBox.length}');
-              debugPrint(
-                  'completed tasks length : ${completedTasksBox.length}');
-              // debugPrint('Fav tasks : ${favTasksBox.length}');
-            },
-            icon: const Icon(Icons.abc),
-          ),
-          IconButton(
-            onPressed: () {
               showModalBottomSheet(
                 context: context,
                 builder: (context) => const MoreSection(),

@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
         future: Future.wait([
           Hive.openBox<Task>(kNewTasksBox),
           Hive.openBox<Task>(kCompletedTasksBox),
-          // Hive.openBox<Task>(kFavoriteTasksBox),
           Hive.openBox(kSettingsBox),
         ]),
         builder: (context, snapshot) {

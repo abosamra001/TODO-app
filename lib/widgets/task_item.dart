@@ -21,7 +21,6 @@ class TaskItem extends StatefulWidget {
 class _TaskItemState extends State<TaskItem> {
   final newTasksBox = Hive.box<Task>(kNewTasksBox);
   final completedTasksBox = Hive.box<Task>(kCompletedTasksBox);
-  // final favTasksBox = Hive.box<Task>(kFavoriteTasksBox);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,30 +42,15 @@ class _TaskItemState extends State<TaskItem> {
         leading: Checkbox(
           value: widget.task.done ?? false,
           onChanged: (val) {
-            debugPrint('=============== id :  ${widget.task.id}');
+            debugPrint(' task id before change : ${widget.task.id}');
             setState(() {
               widget.task.done = val!;
             });
-            if (newTasksBox.containsKey(widget.task.id)) {
-              newTasksBox.delete(widget.task.id);
-            }
-            if (completedTasksBox.containsKey(widget.task.id)) {
-              completedTasksBox.delete(widget.task.id);
-            }
-            // if (favTasksBox.containsKey(widget.task.copy.id)) {
-            //   favTasksBox.delete(widget.task.copy.id);
-            // }
-
+            widget.task.delete();
             if (val!) {
               completedTasksBox.put(widget.task.id, widget.task);
             } else {
               newTasksBox.put(widget.task.id, widget.task);
-              // if (widget.task.isFav!) {
-              //   favTasksBox.put(
-              //     widget.task.copy.id,
-              //     widget.task.copy..isFav = true,
-              //   );
-              // }
             }
           },
           shape: const CircleBorder(),
@@ -93,17 +77,10 @@ class _TaskItemState extends State<TaskItem> {
             setState(() {
               widget.task.isFav = !widget.task.isFav!;
             });
-            newTasksBox.delete(widget.task.id);
+            // if (!widget.task.done!) {
+            //   newTasksBox.delete(widget.task.id);
 
-            newTasksBox.put(widget.task.id, widget.task);
-
-            // if (widget.task.isFav! && !widget.task.done!) {
-            //   favTasksBox.put(
-            //     widget.task.copy.id,
-            //     widget.task.copy..isFav = true,
-            //   );
-            // } else {
-            //   favTasksBox.delete(widget.task.copy.id);
+            //   newTasksBox.put(widget.task.id, widget.task);
             // }
           },
           icon: Icon(

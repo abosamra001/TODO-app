@@ -15,7 +15,7 @@ class Task extends HiveObject {
   @HiveField(3)
   final DateTime createdAt;
   @HiveField(4)
-  final DateTime? dueToDate;
+  final DateTime dueToDate;
   @HiveField(5)
   bool? isFav;
   @HiveField(6)
@@ -23,14 +23,9 @@ class Task extends HiveObject {
 
   Task({
     required this.title,
-    required this.createdAt,
-    this.dueToDate,
+    required this.dueToDate,
     this.isFav = false,
     this.done = false,
-  }) : id = uuid.v4();
-
-  // Task get copy {
-  //   final taskCopy = Task(title: title, createdAt: createdAt);
-  //   return taskCopy;
-  // }
+  })  : createdAt = DateTime.now(),
+        id = uuid.v4();
 }

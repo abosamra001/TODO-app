@@ -18,8 +18,8 @@ class MyDayScreen extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: Hive.box(kSettingsBox).listenable(),
       builder: (context, settings, _) {
-        final int drawerIndex = settings.get('drawerIndex');
-        final index = settings.get('background$drawerIndex');
+        final int drawerIndex = settings.get('drawerIndex', defaultValue: 0);
+        final index = settings.get('background$drawerIndex', defaultValue: 5);
         return Container(
           padding: const EdgeInsets.only(right: 16, left: 16, bottom: 80),
           width: double.infinity,
@@ -63,7 +63,7 @@ class MyDayScreen extends StatelessWidget {
                       builder: (context, newTasks, _) {
                         final tasks = newTasks.values
                             .where((element) =>
-                                element.createdAt.day == DateTime.now().day)
+                                element.dueToDate.day == DateTime.now().day)
                             .toList()
                           ..sort(sortFunction);
                         return NewTasksList(newTasks: tasks);
@@ -75,7 +75,7 @@ class MyDayScreen extends StatelessWidget {
                         builder: (context, completed, _) {
                           final comtasks = completed.values
                               .where((element) =>
-                                  element.createdAt.day == DateTime.now().day)
+                                  element.dueToDate.day == DateTime.now().day)
                               .toList()
                             ..sort(sortFunction);
                           return CompletedTasksList(completedTasks: comtasks);

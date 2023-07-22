@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-// import 'package:todo/constants/const.dart';
 
 import '../widgets/task_item.dart';
 import '../models/task_model.dart';
@@ -13,9 +11,20 @@ class TaskDetails extends StatelessWidget {
   });
   final Task task;
 
+  String formatDueToDate(DateTime dueto) {
+    if (dueto.day == DateTime.now().day) {
+      return 'Due To: My Day';
+    } else if (dueto.day == DateTime.now().day + 1) {
+      return 'Due To: Tomorrow';
+    } else {
+      return DateFormat.MMMMEEEEd().format(dueto);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final String createdDate = DateFormat.MMMMEEEEd().format(task.createdAt);
+    final String dueToDate = formatDueToDate(task.dueToDate);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 10,
@@ -33,26 +42,26 @@ class TaskDetails extends StatelessWidget {
               color: const Color.fromARGB(255, 50, 50, 50),
               borderRadius: BorderRadius.circular(5),
             ),
-            child: const Column(
+            child: Column(
               children: [
-                ListTile(
+                const ListTile(
                   leading: Icon(Icons.alarm),
                   title: Text('Remind me'),
                 ),
-                Divider(
+                const Divider(
                   indent: 20,
                   endIndent: 20,
                 ),
                 ListTile(
-                  leading: Icon(Icons.calendar_month),
-                  title: Text('Add due date'),
-                  shape: UnderlineInputBorder(),
+                  leading: const Icon(Icons.calendar_month),
+                  title: Text(dueToDate),
+                  shape: const UnderlineInputBorder(),
                 ),
-                Divider(
+                const Divider(
                   indent: 20,
                   endIndent: 20,
                 ),
-                ListTile(
+                const ListTile(
                   leading: Icon(Icons.repeat),
                   title: Text('Repeat'),
                 ),
@@ -66,9 +75,6 @@ class TaskDetails extends StatelessWidget {
           const SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: () {
-              // if (Hive.box<Task>(kFavoriteTasksBox).containsKey(task.id)) {
-              //   Hive.box<Task>(kFavoriteTasksBox).delete(task.id);
-              // }
               task.delete();
               Navigator.pop(context);
             },

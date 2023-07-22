@@ -12,16 +12,17 @@ class FavoriteSscreen extends StatefulWidget {
 }
 
 class _FavoriteSscreenState extends State<FavoriteSscreen> {
-  // final favTasksBox = Hive.box<Task>(kFavoriteTasksBox);
   final newTasksBox = Hive.box<Task>(kNewTasksBox);
+  final settingsBox = Hive.box(kSettingsBox);
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: Hive.box(kSettingsBox).listenable(),
+      valueListenable: settingsBox.listenable(),
       builder: (context, settings, _) {
-        final int drawerIndex = Hive.box(kSettingsBox).get('drawerIndex');
-        final index = Hive.box(kSettingsBox).get('background$drawerIndex');
+        final int drawerIndex = settingsBox.get('drawerIndex', defaultValue: 1);
+        final index =
+            settingsBox.get('background$drawerIndex', defaultValue: 6);
         return Container(
           padding: const EdgeInsets.only(right: 16, left: 16, bottom: 80),
           width: double.infinity,

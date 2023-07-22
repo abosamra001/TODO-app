@@ -17,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  DateTime dueToDate = DateTime.now();
   final _controller = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey();
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
@@ -24,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final newTasksBox = Hive.box<Task>(kNewTasksBox);
   final completedTasksBox = Hive.box<Task>(kCompletedTasksBox);
-  // final favTasksBox = Hive.box<Task>(kFavoriteTasksBox);
   final settingsBox = Hive.box(kSettingsBox);
 
   @override
@@ -38,6 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return a.createdAt.compareTo(b.createdAt);
     } else if (settingsBox.get('sortType') == 'Alphabetically') {
       return a.title.compareTo(b.title);
+    } else if (settingsBox.get('sortType') == 'Due date') {
+      return a.dueToDate.compareTo(b.dueToDate);
     } else {
       if (a.isFav! && !b.isFav!) {
         return -1;
@@ -45,6 +47,18 @@ class _HomeScreenState extends State<HomeScreen> {
         return 1;
       }
     }
+  }
+
+  Future<void> selectDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(3000),
+    );
+    setState(() {
+      dueToDate = picked ?? DateTime.now();
+    });
   }
 
   @override
@@ -61,6 +75,12 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Theme.of(context).colorScheme.background,
         ),
         actions: [
+          // IconButton(
+          //     onPressed: () {
+          //       debugPrint('========= completed : ${completedTasksBox.length}');
+          //       debugPrint('========= new ===== : ${newTasksBox.length}');
+          //     },
+          //     icon: Icon(Icons.abc)),
           IconButton(
             onPressed: () {
               showModalBottomSheet(
@@ -72,11 +92,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      //=========================== value listenable builder
       body: ValueListenableBuilder(
         valueListenable: Hive.box(kSettingsBox).listenable(),
         builder: (context, settings, _) {
-          var index = settings.get('drawerIndex');
+          var index = settings.get('drawerIndex', defaultValue: 0);
           if (index == 0) {
             content = MyDayScreen(
               sortFunction: sortingTypes,
@@ -92,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
       floatingActionButton: Container(
-        margin: const EdgeInsets.all(20),
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.background.withAlpha(200),
           borderRadius: BorderRadius.circular(5),
@@ -110,30 +129,27 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             controller: _controller,
             keyboardAppearance: Theme.of(context).brightness,
-            onFieldSubmitted: (value) {
+            onFieldSubmitted: (_) {
               if (formKey.currentState!.validate()) {
                 final task = Task(
-                  title: value,
-                  createdAt: DateTime.now(),
+                  title: _controller.text,
+                  dueToDate: dueToDate,
+                  isFav: drawerIndex == 1 ? true : false,
                 );
-
-                if (drawerIndex == 1) {
-                  task.isFav = true;
-                  // favTasksBox.put(task.id, task.copy..isFav = true);
-                }
                 setState(() {
                   newTasksBox.put(task.id, task);
                 });
-
                 _controller.clear();
-              } else {
-                _autovalidateMode = AutovalidateMode.always;
               }
             },
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.add),
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.add),
               hintText: 'Add a task',
               border: InputBorder.none,
+              suffixIcon: IconButton(
+                onPressed: selectDate,
+                icon: const Icon(Icons.date_range),
+              ),
             ),
           ),
         ),

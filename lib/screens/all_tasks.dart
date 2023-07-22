@@ -5,15 +5,11 @@ import 'package:todo/constants/const.dart';
 import '../models/task_model.dart';
 import '../widgets/tasks_list.dart';
 
-class AllTasksScreen extends StatefulWidget {
-  const AllTasksScreen({super.key, required this.sortFunction});
+class AllTasksScreen extends StatelessWidget {
+  AllTasksScreen({super.key, required this.sortFunction});
   final int Function(Task a, Task b) sortFunction;
-  @override
-  State<AllTasksScreen> createState() => _AllTasksScreenState();
-}
-
-class _AllTasksScreenState extends State<AllTasksScreen> {
   final completedTasksBox = Hive.box<Task>(kCompletedTasksBox);
+
   final newTasksBox = Hive.box<Task>(kNewTasksBox);
 
   @override
@@ -21,8 +17,8 @@ class _AllTasksScreenState extends State<AllTasksScreen> {
     return ValueListenableBuilder(
       valueListenable: Hive.box(kSettingsBox).listenable(),
       builder: (context, settings, _) {
-        final int drawerIndex = settings.get('drawerIndex');
-        final index = settings.get('background$drawerIndex');
+        final int drawerIndex = settings.get('drawerIndex', defaultValue: 2);
+        final index = settings.get('background$drawerIndex', defaultValue: 8);
         return Container(
           padding: const EdgeInsets.only(right: 16, left: 16, bottom: 80),
           width: double.infinity,
@@ -57,8 +53,7 @@ class _AllTasksScreenState extends State<AllTasksScreen> {
                     valueListenable: newTasksBox.listenable(),
                     builder: (context, newTasks, _) {
                       return NewTasksList(
-                        newTasks: newTasks.values.toList()
-                          ..sort(widget.sortFunction),
+                        newTasks: newTasks.values.toList()..sort(sortFunction),
                       );
                     },
                   ),
@@ -66,10 +61,9 @@ class _AllTasksScreenState extends State<AllTasksScreen> {
                     ValueListenableBuilder(
                       valueListenable: completedTasksBox.listenable(),
                       builder: (context, completed, _) {
-                        return CompletedTasksList(
-                          completedTasks: completed.values.toList()
-                            ..sort(widget.sortFunction),
-                        );
+                        final comtasks = completed.values.toList()
+                          ..sort(sortFunction);
+                        return CompletedTasksList(completedTasks: comtasks);
                       },
                     ),
                 ],

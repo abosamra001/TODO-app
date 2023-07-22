@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:todo/constants/const.dart';
 
@@ -14,14 +13,15 @@ class CustomDrawer extends StatelessWidget {
     int favCount = 0;
     int mydayCount = 0;
     for (var i in Hive.box<Task>(kNewTasksBox).values) {
-      if (i.createdAt.day == DateTime.now().day) {
+      if (i.dueToDate.day == DateTime.now().day) {
         mydayCount++;
       }
       if (i.isFav!) {
         favCount++;
       }
     }
-    int alltasksCount = mydayCount + Hive.box<Task>(kCompletedTasksBox).length;
+    int alltasksCount = Hive.box<Task>(kNewTasksBox).length +
+        Hive.box<Task>(kCompletedTasksBox).length;
     return Drawer(
       child: Column(
         children: [
@@ -38,13 +38,7 @@ class CustomDrawer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'TODO',
-                      style: GoogleFonts.pacifico(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 24,
-                      ),
-                    ),
+                    Text('TODO', style: Theme.of(context).textTheme.titleLarge),
                     const Text('Make sure you can & will do'),
                   ],
                 ),
@@ -108,7 +102,7 @@ class CustomDrawerListTile extends StatefulWidget {
 
 class _CustomDrawerListTileState extends State<CustomDrawerListTile> {
   bool isSelected = false;
-  int drawerIndex = Hive.box(kSettingsBox).get('drawerIndex');
+  int drawerIndex = Hive.box(kSettingsBox).get('drawerIndex', defaultValue: 0);
 
   @override
   Widget build(BuildContext context) {
